@@ -228,6 +228,11 @@ int main(int argc,char **argv) {
 		    signal(SIGABRT,lethal_signal_handler);
 		    signal(SIGTERM,lethal_signal_handler);
 		    signal(SIGHUP,sighup_handler);
+		    sigset_t sset;
+		    sigemptyset(&sset);
+		    sigaddset(&sset,SIGINT); sigaddset(&sset,SIGABRT);
+		    sigaddset(&sset,SIGTERM); sigaddset(&sset,SIGHUP);
+		    sigprocmask(SIG_UNBLOCK,&sset,NULL);
 		    while(!finishing) {
 			check_herd(config);
 			sleep(config.check_interval);
