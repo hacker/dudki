@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
+ <version version="0.2.1">
+  <ni>do not act -e when doing -r</ni>
+ </version>
  <version version="0.2" date="July 24th, 2004">
   <ni>now dudki sends arbitrary signals to the processes being monitored from the command line</ni>
   <ni>detection of running processes which do not keep pidfiles, using process name</ni>
