@@ -1,0 +1,123 @@
+.TH dudki 8 "June 9th, 2004" "dudki(8)" "Klever Group (http://www.klever.net/)"
+.hla en
+.ds longopt @HAVE_GETOPT_LONG@
+
+.SH NAME
+
+dudki \- a process monitoring daemon
+
+.SH SYNOPSYS
+
+\fBdudki\fR [\fB-h\fR]
+.if \*[longopt] [\fB--help\fR] [\fB--usage\fR]
+[\fB-V\fR]
+.if \*[longopt] [\fB--version\fR]
+[\fB-L\fR]
+.if \*[longopt] [\fB--license\fR]
+[\fB-f\fR \fIconfigfile\fR]
+.if \*[longopt] [\fB--config=\fR\fIconfigfile\fR]
+[\fB-k\fR]
+.if \*[longopt] [\fB--kill\fR]
+[\fB-r\fR]
+.if \*[longopt] [\fB--reload\fR]
+[\fB-c\fR]
+.if \*[longopt] [\fB--check\fR]
+[\fB-e\fR]
+.if \*[longopt] [\fB--ensure\fR]
+[\fB-t\fR]
+.if \*[longopt] [\fB--test\fR]
+
+.SH DESCRIPTION
+
+dudki daemon is designed to run in the background and periodically
+check if certain processes specified in the configuration file are
+running. If a process is detected as dead dudki tries to restart it
+using the command line specified in the configuration file and notifies
+the specified contact (currently only via email).
+
+.SH OPTIONS
+
+.TP
+.ie \*[longopt] \fB-f\fR \fIconfigfile\fR, \fB--config=\fR\fIconfigfile\fR
+.el \fB-f\fR \fIconfigfile\fR
+Specify the configuration file to use (default is
+\fI@sysconfdir@/dudki.conf\fR).
+.TP
+.ie \*[longopt] \fB-k\fR, \fB--kill\fR
+.el \fB-k\fR
+Stop the running instance by sending the \fBSIGTERM\fR signal.
+.TP
+.ie \*[longopt] \fB-r\fR, \fB--reload\fR
+.el \fB-r\fR
+Reload the running instance by sending the \fBSIGHUP\fR signal.
+.TP
+.ie \*[longopt] \fB-c\fR, \fB--check\fR
+.el \fB-c\fR
+Check if dudki is running. Exit with non-zero status if not.
+.TP
+.ie \*[longopt] \fB-e\fR, \fB--ensure\fR
+.el \fB-e\fR
+Ensure that dudki is running. Load, if not. Useful for running as a
+cron job once in a while. If the daemon is running runs quietly
+providing no output.
+.TP
+.ie \*[longopt] \fB-t\fR, \fB--test\fR
+.el \fB-t\fR
+Check the syntax of configuration file and exit.
+.TP
+.ie \*[longopt] \fB-h\fR, \fB--help\fR, \fB--usage\fR
+.el \fB-h\fR
+Display short usage message and exit.
+.TP
+.ie \*[longopt] \fB-V\fR, \fB--version\fR
+.el \fB-V\fR
+Report version and exit.
+.TP
+.ie \*[longopt] \fB-L\fR, \fB--license\fR
+.el \fB-L\fR
+Show licensing terms.
+
+.SH EXIT STATUS
+
+Zero in case of success, non-zero otherwise.
+
+.SH FILES
+.TP
+@sysconfdir@/dudki.conf
+Default configuration file.
+.TP
+/var/run/dudki.pid
+Default pid-file for the dudki process.
+
+.SH AUTHOR
+
+Written by Michael 'hacker' Krelin <hacker@klever.net>
+
+.SH COPYRIGHT
+
+Copyright (c) 2004 Klever Group (http://www.klever.net/)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+.SH BUGS
+
+You tell me. Send reports to <dudki-bugs@klever.net>
+
+.SH SEE ALSO
+\fBdudki.conf\fR(5)

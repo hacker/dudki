@@ -1,0 +1,154 @@
+.TH dudki.conf 5 "July 9th, 2004" "dudki.conf(5)" "Klever Group (http://www.klever.net/)"
+.hla en
+
+.SH NAME
+
+dudki.conf \- The configuration file for the dudki process
+monitoring daemon
+
+.SH SYNOPSIS
+
+The dudki.conf file is a runtime configuration file for the dudki
+process monitoring daemon. It contains the information about the process
+being monitored and the instruction on how to cope with the processes.
+
+.SH FILE FORMAT
+
+The file consist of the global configuration and per-process
+configuration sections. The global configuration controls general
+dudki behaviour and sets defaults for per-process configuration
+directives.
+
+.SH GLOBAL CONFIGURATION
+
+.TP
+\fBCheckInterval\fR \fIseconds\fR
+Specifies interval in seconds at wich dudki performs checks.
+.TP
+\fBDaemonize\fR \fIon/off\fR
+Specifies whether dudki daemon should fork itself into background.
+Normally, you don't want it to run in foreground. Unless you want to run
+it from \fIinit(8)\fR process (I've nevetr tried it) via
+\fIinittab(5)\fR.
+.TP
+\fBPidFile\fR \fIfilename\fR
+Specifies where to store dudki's process id (default is
+/var/run/dudki.pid)
+.TP
+\fBMailtoHeader\fR \fIheader\fR \fIcontent\fR
+Sets global defaults for process section's MailtoHeader directive. See
+below.
+.TP
+\fBNotify\fR \fIschema\fR:\fItarget\fR
+Sets global default for per process notification. See below.
+
+.TP
+\fB<Process\fR \fIidentifier\fR\fB>\fR
+Starts per process configuration section. The process will be referenced
+using the short descriptive name specified (for example in email
+notifications).
+
+.SH PER-PROCESS CONFIGURATION
+
+Per-process configuration sections specifies the processes to monitor.
+And parameters pertaining to the process.
+
+.TP
+\fBPidFile\fR \fIfilename\fR
+Specifies the file where to fetch process id of the process being
+monitored from. The absence of file, as well as the absence of process
+specified by the pid stored in the file signifies the process death and
+triggers restart.
+.TP
+\fBRestartCommand\fR \fIcommand\fR
+Specifies the command to run in order to restart the process.
+.TP
+\fBUser\fR \fIuser\fR
+Specifies the unix user to change to before executing the command
+specified by \fBRestartCommand\fR.
+.TP
+\fBGroup\fR \fIgroup\fR
+Specifies the unix group to change to before executing the command
+specified by \fBRestartCommand\fR.
+.TP
+\fBChroot\fR \fIpath\fR
+Specifies the directory to set filesystem root to before executing the
+command specified by by \fBRestartCommand\fR.
+.TP
+\fBMailtoHeader\fR \fIheader\fR \fIcontent\fR
+Specifies extra headers to add to mailto: notifications sent by the
+dudki daemon. Headers specified in per-process section override the
+ones specified globally.A
+.TP
+\fBNotify\fR \fIschema\fR:\fItarget\fR
+Specifies the contact to be notified whenever something notable happens
+to the process. The only schema currently supported is 'mailto:'.
+.TP
+\fB</Process>\fR
+Signifies the end of process section.
+
+.SH EXAMPLE
+
+.br
+CheckInterval 60
+.br
+PidFile /var/run/dudki.pid
+.br
+Daemonize on
+.br
+MailtoHeader From "Dudki <root@klever.net>"
+.br
+MailtoHeader Reply-To devnull@klever.net
+.br
+Notify mailto:hacker@klever.net
+.br 
+
+.br
+<Process apache>
+.br
+ PidFile /var/run/httpd.pid
+.br
+ RestartCommand "exec /usr/sbin/apachectl start"
+.br
+</Process>
+.br
+<Process named>
+.br
+ PidFile /var/run/named.pid
+.br
+ RestartCommand "exec /usr/sbin/named"
+.br
+</Process>
+
+.SH AUTHOR
+
+Written by Michael 'hacker' Krelin <hacker@klever.net>
+
+.SH COPYRIGHT
+
+Copyright (c) 2004 Klever Group (http://www.klever.net/)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+.SH BUGS
+
+You tell me. Send reports to <dudki-bugs@klever.net>
+
+.SH SEE ALSO
+\fBdudki\fR(8), \fBinit\fR(8), \fBinittab\fR(5)
