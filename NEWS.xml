@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
+ <version verision="0.2" date="July 23rd, 2004">
+  <ni>now dudki sends signals to the processes being monitored from the command line</ni>
+ </version>
  <version version="0.1" date="July 21st, 2004">
   <ni><kbd>initgroups()</kbd> called before executing <kbd>RestartCommand</kbd></ni>
   <ni>more civilized way of restarting on <kbd>SIGHUP</kbd></ni>
