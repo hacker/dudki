@@ -21,6 +21,7 @@ using namespace std;
 #define PCOPY   "Copyright (c) 2004 Klever Group"
 
 bool finishing = false;
+bool restarting = false;
 static char **_argv = NULL;
 
 static void lethal_signal_handler(int signum) {
@@ -29,7 +30,7 @@ static void lethal_signal_handler(int signum) {
 }
 static void sighup_handler(int signum) {
     syslog(LOG_NOTICE,"SUGHUP received, reloading.");
-    execvp(_argv[0],_argv);
+    restarting = finishing = true;
 }
 
 void check_herd(configuration& config) {
@@ -237,6 +238,8 @@ int main(int argc,char **argv) {
 			check_herd(config);
 			sleep(config.check_interval);
 		    }
+		    if(restarting)
+			execvp(_argv[0],_argv);
 		}
 		break;
 	    default:

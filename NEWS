@@ -1,2 +1,5 @@
+0.1
+ - initgroups() before executing RestartCommand.
+ - more civilized restart.
 0.0
  - Initial release.
