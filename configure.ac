@@ -17,15 +17,17 @@ AC_TYPE_PID_T
 AC_FUNC_FORK
 AC_HEADER_STDC
 AC_TYPE_SIGNAL
-AC_CHECK_FUNCS([dup2 strtol])
+AC_CHECK_FUNCS([dup2 memmove strtol])
 AC_CHECK_FUNC([getopt_long],[
  AC_DEFINE([HAVE_GETOPT_LONG],[1],[Define to make use of getopt_long])
- AC_SUBST(HAVE_GETOPT_LONG,1)
+ AC_SUBST([HAVE_GETOPT_LONG],1)
 ],[
- AC_SUBST(HAVE_GETOPT_LONG,0)
+ AC_SUBST([HAVE_GETOPT_LONG],0)
 ])
 
-PKG_CHECK_MODULES(DOTCONF,[dotconf],,[
+AC_PATH_PROG([XSLTPROC],[xsltproc],[true])
+
+PKG_CHECK_MODULES([DOTCONF],[dotconf],,[
  AC_MSG_ERROR([no dotconf library found])
 ])
 
