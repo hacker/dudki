@@ -234,12 +234,11 @@ int main(int argc,char **argv) {
 			if(failures)
 			    throw runtime_error("not all processes have been successfully signaled");
 		    }
-		    if(!op_signum)
-			exit(0);
+		    exit(0);
 		}catch(exception& e) {
-		    if(!op_signum)
-			exit(1);
+		    exit(1);
 		}
+		break;
 	    case op_ensure:
 		try {
 		    signal_self(config,0);
@@ -289,4 +288,5 @@ int main(int argc,char **argv) {
 	cerr << "Oops: " << e.what() << endl;
 	return 1;
     }
+    exit(0);
 }
