@@ -2,6 +2,7 @@
 <news>
  <version version="0.2.1">
   <ni>do not act -e when doing -r</ni>
+  <ni>proper handling of <kbd>ProcessName</kbd> on <kbd>FreeBSD</kbd></ni>
  </version>
  <version version="0.2" date="July 24th, 2004">
   <ni>now dudki sends arbitrary signals to the processes being monitored from the command line</ni>

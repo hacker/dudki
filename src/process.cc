@@ -249,17 +249,27 @@ void process::gather_proc_info() {
 	    continue;
 	string cmd;
 	ifstream ss(s,ios::in);
-	if(!ss)
-	    continue;
-	getline(ss,cmd);
-	string::size_type op = cmd.find('(');
-	if(op==string::npos)
-	    continue;
-	cmd.erase(0,op+1);
-	string::size_type cp = cmd.find(')');
-	if(cp==string::npos)
-	    continue;
-	cmd.erase(cp);
+	if(ss) {
+	    getline(ss,cmd);
+	    string::size_type op = cmd.find('(');
+	    if(op==string::npos)
+		continue;
+	    cmd.erase(0,op+1);
+	    string::size_type cp = cmd.find(')');
+	    if(cp==string::npos)
+		continue;
+	    cmd.erase(cp);
+	}else{
+	    r = snprintf(s,sizeof(s),"/proc/%d/status",*i);
+	    if(r>=sizeof(s) || r<1)
+		continue;
+	    ifstream ss(s,ios::in);
+	    if(!ss)
+		continue;
+	    ss >> cmd;
+	    if(cmd.empty())
+		continue;
+	}
 	r = snprintf(s,sizeof(s),"/proc/%d/cmdline",*i);
 	if(r>=sizeof(s) || r<1)
 	    continue;
