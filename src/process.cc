@@ -58,11 +58,13 @@ void process::check(const string& id,configuration& config) {
 }
 
 void process::launch(const string& id,configuration& config) {
-    uid_t uid = 0;
+    uid_t uid = (uid_t)-1;
+    gid_t gid = (gid_t)-1;
     if(!user.empty()) {
 	struct passwd *ptmp = getpwnam(user.c_str());
 	if(ptmp) {
 	    uid = ptmp->pw_uid;
+	    gid = ptmp->pw_gid;
 	}else{
 	    errno=0;
 	    uid = strtol(user.c_str(),NULL,0);
@@ -70,7 +72,6 @@ void process::launch(const string& id,configuration& config) {
 		throw runtime_error("Failed to resolve User value to uid");
 	}
     }
-    gid_t gid = 0;
     if(!group.empty()) {
 	struct group *gtmp = getgrnam(group.c_str());
 	if(gtmp) {
@@ -89,14 +90,16 @@ void process::launch(const string& id,configuration& config) {
 	// child
 	try {
 	    setsid();
+	    if(user.empty()) {
+		if((getgid()!=gid) && setgid(gid))
+		    throw runtime_error(string(__PRETTY_FUNCTION__)+": failed to setgid()");
+	    }else{
+		if(initgroups(user.c_str(),gid))
+		    throw runtime_error(string(__PRETTY_FUNCTION__)+": failed to initgroups()");
+	    }
 	    if(!chroot.empty()) {
 		if(::chroot(chroot.c_str()))
 		    throw runtime_error(string(__PRETTY_FUNCTION__)+": failed to chroot()");
-	    }
-	    if(!group.empty()) {
-		// TODO: initgroups()?
-		if((getgid()!=gid) && setgid(gid))
-		    throw runtime_error(string(__PRETTY_FUNCTION__)+": failed to setgid()");
 	    }
 	    if(!user.empty()) {
 		if((getuid()!=uid) && setuid(uid))
