@@ -26,6 +26,7 @@ dudki \- a process monitoring daemon
 .if \*[longopt] [\fB--ensure\fR]
 [\fB-t\fR]
 .if \*[longopt] [\fB--test\fR]
+[\fI<process-list>\fR]
 
 .SH DESCRIPTION
 
@@ -45,15 +46,19 @@ Specify the configuration file to use (default is
 .TP
 .ie \*[longopt] \fB-k\fR, \fB--kill\fR
 .el \fB-k\fR
-Stop the running instance by sending the \fBSIGTERM\fR signal.
+Stop the running instance by sending the \fBSIGTERM\fR signal. If no process
+name specified on the command line, dudki kills his own running instance.
 .TP
 .ie \*[longopt] \fB-r\fR, \fB--reload\fR
 .el \fB-r\fR
-Reload the running instance by sending the \fBSIGHUP\fR signal.
+Reload the running instance by sending the \fBSIGHUP\fR signal. Like with
+\fB-k\fR, if no process name specified on the command line, dudki sends
+\fBSIGHUP\fR to his own running instance.
 .TP
 .ie \*[longopt] \fB-c\fR, \fB--check\fR
 .el \fB-c\fR
-Check if dudki is running. Exit with non-zero status if not.
+Check if dudki is running. Exit with non-zero status if not. The same target
+rules as in \fB-k\fR and \fB-r\fR apply here.
 .TP
 .ie \*[longopt] \fB-e\fR, \fB--ensure\fR
 .el \fB-e\fR

@@ -15,21 +15,10 @@ using namespace std;
 #include "configuration.h"
 
 void process::check(const string& id,configuration& config) {
-    bool running = false;
-    ifstream pids(pidfile.c_str(),ios::in);
-    if(pids) {
-	pid_t pid = 0;
-	pids >> pid;
-	pids.close();
-	if(pid) {
-	    if(!kill(pid,0)) {
-		running = true;
-	    }
-	}
-    }
-    if(running){
+    try {
+	signal(0);
 	patience = 0;
-    }else{
+    }catch(exception& e) {
 	if(patience>60) { // TODO: configurable
 	    patience = 0;
 	}else{
@@ -184,4 +173,17 @@ void process::notify_mailto(const string& email,const string& id,const string& e
     int status;
     waitpid(pid,&status,0);
     // TODO: check the return code
+}
+
+void process::signal(int signum) const {
+    ifstream pids(pidfile.c_str(),ios::in);
+    if(!pids)
+	throw runtime_error("no pidfile found");
+    pid_t pid = 0;
+    pids >> pid;
+    pids.close();
+    if(!pid)
+	throw runtime_error("no pid in pidfile");
+    if(kill(pid,signum))
+	throw runtime_error("failed to signal process");
 }

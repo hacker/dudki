@@ -29,6 +29,8 @@ class process {
 	void do_notify(const string& id,const string& event,const string& description,configuration& config);
 	void notify_mailto(const string& email,const string& id,const string& event,
 		const string& description,configuration& config);
+
+	void signal(int signum) const;
 };
 
 typedef map<string,process> processes_t;

@@ -62,12 +62,11 @@ int main(int argc,char **argv) {
 	enum {
 	    op_default,
 	    op_work,
-	    op_hup,
-	    op_term,
-	    op_check,
+	    op_signal,
 	    op_ensure,
 	    op_test
 	} op = op_default;
+	int op_signum = 0;
 	while(true) {
 #define	SHORTOPTSTRING "f:hVLrkcet"
 #ifdef HAVE_GETOPT_LONG
@@ -93,7 +92,8 @@ int main(int argc,char **argv) {
 	    switch(c) {
 		case 'h':
 		    cerr << PHEADER << endl
-			<< PCOPY << endl << endl <<
+			<< PCOPY << endl << endl
+			<< " " << argv[0] << " [options] [processes]" << endl << endl <<
 #ifdef HAVE_GETOPT_LONG
 			" -h, --help\n"
 			" --usage         display this text\n"
@@ -102,9 +102,11 @@ int main(int argc,char **argv) {
 			" -f filename, --config=filename\n"
 			"                 specify the configuration file to use\n"
 			"\n"
-			" -k, --kill      stop running instance\n"
+			" -k, --kill      stop running instance (send SIGTERM)\n"
 			" -r, --reload    reload running instance (send SIGHUP)\n"
-			" -c, --check     check if dudki is running\n"
+			" -c, --check     check if the process is running\n"
+			"     (the above commands operate on dudki itself if no\n"
+			"      process name has been specified)\n"
 			" -e, --ensure    ensure that dudki is running\n"
 			" -t, --test      test configuration file and exit"
 #else /* !HAVE_GETOPT_LONG */
@@ -113,9 +115,11 @@ int main(int argc,char **argv) {
 			" -L              show license\n"
 			" -f filename     specify the configuration file to use\n"
 			"\n"
-			" -k              stop running instance\n"
+			" -k              stop running instance (send SIGTERM)\n"
 			" -r              reload running instance (send SIGHUP)\n"
-			" -c              check if dudki is running\n"
+			" -c              check if the process is running\n"
+			"     (the above commands operate on dudki itself if no\n"
+			"      process name has been specified)\n"
 			" -e              ensure that dudki is running\n"
 			" -t              test configuration file and exit"
 #endif /* /HAVE_GETOPT_LONG */
@@ -139,21 +143,21 @@ int main(int argc,char **argv) {
 			cerr << "Can't obey two or more orders at once" << endl;
 			exit(1);
 		    }
-		    op = op_term;
+		    op = op_signal; op_signum = SIGTERM;
 		    break;
 		case 'r':
 		    if(op!=op_default) {
 			cerr << "Can't obey two or more orders at once" << endl;
 			exit(1);
 		    }
-		    op = op_hup;
+		    op = op_signal; op_signum = SIGHUP;
 		    break;
 		case 'c':
 		    if(op!=op_default) {
 			cerr << "Can't obey two or more orders at once" << endl;
 			exit(1);
 		    }
-		    op = op_check;
+		    op = op_signal; op_signum = 0;
 		    break;
 		case 'e':
 		    if(op!=op_default) {
@@ -187,18 +191,31 @@ int main(int argc,char **argv) {
 	    case op_test:
 		cerr << "Configuration OK" << endl;
 		break;
-	    case op_hup:
-		signal_self(config,SIGHUP);
-		break;
-	    case op_term:
-		signal_self(config,SIGTERM);
-		break;
-	    case op_check:
-		try{
-		    signal_self(config,0);
-		    exit(0);
+	    case op_signal:
+		try {
+		    if(optind>=argc) {
+			signal_self(config,op_signum);
+		    }else{
+			int failures = 0;
+			for(int narg=optind;narg<argc;narg++) {
+			    try {
+				processes_t::const_iterator i = config.processes.find(argv[narg]);
+				if(i==config.processes.end())
+				    throw runtime_error("no such process configured");
+				i->second.signal(op_signum);
+			    }catch(exception& e) {
+				cerr << "dudki(" << argv[narg] << "): " << e.what() << endl;
+				failures++;
+			    }
+			}
+			if(failures)
+			    throw runtime_error("not all processes have been successfully signaled");
+		    }
+		    if(!op_signum)
+			exit(0);
 		}catch(exception& e) {
-		    exit(1);
+		    if(!op_signum)
+			exit(1);
 		}
 	    case op_ensure:
 		try {
