@@ -1,4 +1,4 @@
-AC_INIT([dudki], [0.1], [dudki-bugs@klever.net])
+AC_INIT([dudki], [0.2], [dudki-bugs@klever.net])
 AC_CONFIG_SRCDIR([src/dudki.cc])
 AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE([dist-bzip2])
