@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <syslog.h>
+#include <errno.h>
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
@@ -68,7 +69,7 @@ int main(int argc,char **argv) {
 	} op = op_default;
 	int op_signum = 0;
 	while(true) {
-#define	SHORTOPTSTRING "f:hVLrkcet"
+#define	SHORTOPTSTRING "f:hVLrkcets:"
 #ifdef HAVE_GETOPT_LONG
 	    static struct option opts[] = {
 		{ "help", no_argument, 0, 'h' },
@@ -78,6 +79,7 @@ int main(int argc,char **argv) {
 		{ "config", required_argument, 0, 'f' },
 		{ "kill", no_argument, 0, 'k' },
 		{ "reload", no_argument, 0, 'r' },
+		{ "signal", required_argument, 0, 's' },
 		{ "check", no_argument, 0, 'c' },
 		{ "ensure", no_argument, 0, 'e' },
 		{ "test", no_argument, 0, 't' },
@@ -104,6 +106,8 @@ int main(int argc,char **argv) {
 			"\n"
 			" -k, --kill      stop running instance (send SIGTERM)\n"
 			" -r, --reload    reload running instance (send SIGHUP)\n"
+			" -s signum, --signal=signum\n"
+			"                 send the specified signal to the running process\n"
 			" -c, --check     check if the process is running\n"
 			"     (the above commands operate on dudki itself if no\n"
 			"      process name has been specified)\n"
@@ -117,6 +121,7 @@ int main(int argc,char **argv) {
 			"\n"
 			" -k              stop running instance (send SIGTERM)\n"
 			" -r              reload running instance (send SIGHUP)\n"
+			" -s signum       send the specified signal to the running process\n"
 			" -c              check if the process is running\n"
 			"     (the above commands operate on dudki itself if no\n"
 			"      process name has been specified)\n"
@@ -172,6 +177,19 @@ int main(int argc,char **argv) {
 			exit(1);
 		    }
 		    op = op_test;
+		    break;
+		case 's':
+		    if(op!=op_default) {
+			cerr << "Can't obey two or more orders at once" << endl;
+			exit(1);
+		    }
+		    op = op_signal;
+		    errno = 0;
+		    op_signum = strtol(optarg,NULL,0);
+		    if(errno) {
+			cerr << "Can't obtain the signal value" << endl;
+			exit(1);
+		    }
 		    break;
 		default:
 		    cerr << "Huh??" << endl;

@@ -1,10 +1,10 @@
-.TH dudki 8 "June 9th, 2004" "dudki(8)" "Klever Group (http://www.klever.net/)"
+.TH dudki 8 "July 23rd, 2004" "dudki(8)" "Klever Group (http://www.klever.net/)"
 .hla en
 .ds longopt @HAVE_GETOPT_LONG@
 
 .SH NAME
 
-dudki \- a process monitoring daemon
+dudki \- a process maintenance daemon
 
 .SH SYNOPSYS
 
@@ -22,6 +22,8 @@ dudki \- a process monitoring daemon
 .if \*[longopt] [\fB--reload\fR]
 [\fB-c\fR]
 .if \*[longopt] [\fB--check\fR]
+[\fB-s\fR \fIsignum\fR]
+.if \*[longopt] [\fB--signal=\fR\fIsignum\fR]
 [\fB-e\fR]
 .if \*[longopt] [\fB--ensure\fR]
 [\fB-t\fR]
@@ -54,6 +56,11 @@ name specified on the command line, dudki kills his own running instance.
 Reload the running instance by sending the \fBSIGHUP\fR signal. Like with
 \fB-k\fR, if no process name specified on the command line, dudki sends
 \fBSIGHUP\fR to his own running instance.
+.TP
+.ie \*[longopt] \fB-s\fR \fIsignum\fR, \fB--signal=\fR\fIsignum\fR
+.el \fB-s\fR \fIsignum\fR
+Send arbitrary signal to the names processes (or self, but it doesn't make much
+sense).
 .TP
 .ie \*[longopt] \fB-c\fR, \fB--check\fR
 .el \fB-c\fR
