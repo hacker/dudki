@@ -1,4 +1,4 @@
-.TH dudki.conf 5 "July 9th, 2004" "dudki.conf(5)" "Klever Group (http://www.klever.net/)"
+.TH dudki.conf 5 "July 24th, 2004" "dudki.conf(5)" "Klever Group (http://www.klever.net/)"
 .hla en
 
 .SH NAME
@@ -59,6 +59,10 @@ Specifies the file where to fetch process id of the process being
 monitored from. The absence of file, as well as the absence of process
 specified by the pid stored in the file signifies the process death and
 triggers restart.
+.TP
+\fBProcessName\fR \fIprocess name\fR
+Specifies the name of the process. The alternative way to find process if it
+doesn't keep pid in the file. Similar to \fBpidof\fR(1).
 .TP
 \fBRestartCommand\fR \fIcommand\fR
 Specifies the command to run in order to restart the process.

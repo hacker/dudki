@@ -4,19 +4,35 @@
 #include <signal.h>
 #include <pwd.h>
 #include <grp.h>
+#include <dirent.h>
 #include <sys/wait.h>
 #include <syslog.h>
 #include <errno.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <stdexcept>
+#include <string>
+#include <vector>
 using namespace std;
 #include "process.h"
 #include "configuration.h"
 
+static multimap<string,pid_t> procpids;
+
+void process::check() const {
+    if(!pidfile.empty()) {
+	signal(0);
+    }else if(!process_name.empty()) {
+	if(procpids.empty())
+	    gather_proc_info();
+	if(procpids.find(process_name)==procpids.end())
+	    throw runtime_error("no such process");
+    } // XXX: or else?
+}
 void process::check(const string& id,configuration& config) {
     try {
-	signal(0);
+	check();
 	patience = 0;
     }catch(exception& e) {
 	if(patience>60) { // TODO: configurable
@@ -176,14 +192,94 @@ void process::notify_mailto(const string& email,const string& id,const string& e
 }
 
 void process::signal(int signum) const {
-    ifstream pids(pidfile.c_str(),ios::in);
-    if(!pids)
-	throw runtime_error("no pidfile found");
-    pid_t pid = 0;
-    pids >> pid;
-    pids.close();
-    if(!pid)
-	throw runtime_error("no pid in pidfile");
-    if(kill(pid,signum))
-	throw runtime_error("failed to signal process");
+    if(!pidfile.empty()) {
+	ifstream pids(pidfile.c_str(),ios::in);
+	if(!pids)
+	    throw runtime_error("no pidfile found");
+	pid_t pid = 0;
+	pids >> pid;
+	pids.close();
+	if(!pid)
+	    throw runtime_error("no pid in pidfile");
+	if(kill(pid,signum))
+	    throw runtime_error("failed to signal process");
+    }else if(!process_name.empty()) {
+	if(procpids.empty())
+	    gather_proc_info();
+	pair<multimap<string,pid_t>::const_iterator,multimap<string,pid_t>::const_iterator> range = procpids.equal_range(process_name);
+	int count = 0;
+	for(multimap<string,pid_t>::const_iterator i=range.first;i!=range.second;++i) {
+	    pid_t pid = i->second;
+	    if(kill(i->second,signum))
+		throw runtime_error("failed to signal process");
+	    count++;
+	}
+	if(!count)
+	    throw runtime_error("no running instance detected");
+    }else
+	throw runtime_error("nothing is known about the process");
+}
+
+void process::prepare_herd() {
+    procpids.clear();
+}
+void process::unprepare_herd() {
+    procpids.clear();
+}
+void process::gather_proc_info() {
+    vector<pid_t> allpids;
+    DIR *pd = opendir("/proc");
+    if(!pd)
+	throw runtime_error("failed to open /proc");
+    struct dirent *pde;
+    pid_t selfpid = getpid();
+    while(pde=readdir(pd)) {
+	errno=0;
+	pid_t pid = atoi(pde->d_name);
+	if((!pid) || pid==selfpid)
+	    continue;
+	allpids.push_back(pid);
+    }
+    closedir(pd);
+    char s[256];
+    procpids.clear();
+    for(vector<pid_t>::const_iterator i=allpids.begin();i!=allpids.end();++i) {
+	int r = snprintf(s,sizeof(s),"/proc/%d/stat",*i);
+	if(r>=sizeof(s) || r<1)
+	    continue;
+	string cmd;
+	ifstream ss(s,ios::in);
+	if(!ss)
+	    continue;
+	getline(ss,cmd);
+	string::size_type op = cmd.find('(');
+	if(op==string::npos)
+	    continue;
+	cmd.erase(0,op+1);
+	string::size_type cp = cmd.find(')');
+	if(cp==string::npos)
+	    continue;
+	cmd.erase(cp);
+	r = snprintf(s,sizeof(s),"/proc/%d/cmdline",*i);
+	if(r>=sizeof(s) || r<1)
+	    continue;
+	ifstream cs(s,ios::binary);
+	if(!cs)
+	    continue;
+	string command;
+	while(cs) {
+	    string cl;
+	    getline(cs,cl,(char)0);
+	    string::size_type lsl = cl.rfind('/');
+	    if(lsl!=string::npos)
+		cl.erase(0,lsl+1);
+	    if(cl.substr(0,cmd.length())==cmd) {
+		command = cl;
+		break;
+	    }
+	}
+	procpids.insert(pair<string,pid_t>(cmd,*i));
+	if((!command.empty()) && cmd!=command)
+	    procpids.insert(pair<string,pid_t>(command,*i));
+    }
 }

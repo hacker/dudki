@@ -92,6 +92,10 @@ static DOTCONF_CB(dco__process) { dc_context *dcc = (dc_context*)ctx;
     return NULL;
 }
 
+static DOTCONF_CB(dco_process_name) { dc_context *dcc = (dc_context*)ctx;
+    dcc->ps->process_name = cmd->data.str;
+    return NULL;
+}
 static DOTCONF_CB(dco_restart_command) { dc_context *dcc = (dc_context*)ctx;
     dcc->ps->restart_cmd = cmd->data.str;
     return NULL;
@@ -116,6 +120,7 @@ static const configoption_t dc_options[] = {
     { "MailtoHeader", ARG_STR, dco_mailto_header, NULL, DCC_ROOT|DCC_PROCESS },
     { "Notify", ARG_STR, dco_notify, NULL, DCC_ROOT|DCC_PROCESS },
     { "<Process", ARG_STR, dco_process, NULL, DCC_ROOT },
+    {  "ProcessName", ARG_STR, dco_process_name, NULL, DCC_PROCESS },
     {  "RestartCommand", ARG_STR, dco_restart_command, NULL, DCC_PROCESS },
     {  "User", ARG_STR, dco_user, NULL, DCC_PROCESS },
     {  "Group", ARG_STR, dco_group, NULL, DCC_PROCESS },

@@ -12,6 +12,7 @@ typedef map<string,string> headers_t;
 class process {
     public:
 	string pidfile;
+	string process_name;
 	string restart_cmd;
 	string notify;
 	string user;
@@ -31,6 +32,11 @@ class process {
 		const string& description,configuration& config);
 
 	void signal(int signum) const;
+	void check() const;
+
+	static void prepare_herd();
+	static void gather_proc_info();
+	static void unprepare_herd();
 };
 
 typedef map<string,process> processes_t;

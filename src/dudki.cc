@@ -35,8 +35,10 @@ static void sighup_handler(int signum) {
 }
 
 void check_herd(configuration& config) {
+    process::prepare_herd();
     for(processes_t::iterator i=config.processes.begin();i!=config.processes.end();++i)
 	i->second.check(i->first,config);
+    process::unprepare_herd();
 }
 
 void signal_self(const configuration& config,int signum) {
@@ -220,7 +222,10 @@ int main(int argc,char **argv) {
 				processes_t::const_iterator i = config.processes.find(argv[narg]);
 				if(i==config.processes.end())
 				    throw runtime_error("no such process configured");
-				i->second.signal(op_signum);
+				if(op_signum)
+				    i->second.signal(op_signum);
+				else
+				    i->second.check();
 			    }catch(exception& e) {
 				cerr << "dudki(" << argv[narg] << "): " << e.what() << endl;
 				failures++;
