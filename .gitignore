@@ -13,3 +13,5 @@ missing
 install-sh
 INSTALL
 NEWS
+mkinstalldirs
+stamp-h.in
