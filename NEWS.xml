@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
- <version version="0.2.1">
+ <version version="0.2.1" date="August 1st, 2004">
   <ni>do not act -e when doing -r</ni>
   <ni>proper handling of <kbd>ProcessName</kbd> on <kbd>FreeBSD</kbd></ni>
  </version>
