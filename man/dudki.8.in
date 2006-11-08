@@ -1,4 +1,4 @@
-.TH dudki 8 "July 23rd, 2004" "dudki(8)" "Klever Group (http://www.klever.net/)"
+.TH dudki 8 "November 8th, 2006" "dudki(8)" "Klever Group (http://www.klever.net/)"
 .hla en
 .ds longopt @HAVE_GETOPT_LONG@
 
@@ -107,7 +107,7 @@ Written by Michael 'hacker' Krelin <hacker@klever.net>
 
 .SH COPYRIGHT
 
-Copyright (c) 2004 Klever Group (http://www.klever.net/)
+Copyright (c) 2004-2006 Klever Group (http://www.klever.net/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

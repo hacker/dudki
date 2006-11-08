@@ -1,4 +1,4 @@
-.TH dudki.conf 5 "July 24th, 2004" "dudki.conf(5)" "Klever Group (http://www.klever.net/)"
+.TH dudki.conf 5 "November 8th, 2006" "dudki.conf(5)" "Klever Group (http://www.klever.net/)"
 .hla en
 
 .SH NAME
@@ -130,7 +130,7 @@ Written by Michael 'hacker' Krelin <hacker@klever.net>
 
 .SH COPYRIGHT
 
-Copyright (c) 2004 Klever Group (http://www.klever.net/)
+Copyright (c) 2004-2006 Klever Group (http://www.klever.net/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
