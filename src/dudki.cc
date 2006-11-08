@@ -19,7 +19,7 @@ using namespace std;
 #endif
 
 #define PHEADER PACKAGE " Version " VERSION
-#define PCOPY   "Copyright (c) 2004 Klever Group"
+#define PCOPY   "Copyright (c) 2004-2006 Klever Group"
 
 bool finishing = false;
 bool restarting = false;
