@@ -95,12 +95,14 @@ void process::launch(const string& id,configuration& config) {
 	// child
 	try {
 	    setsid();
-	    if(user.empty()) {
-		if((getgid()!=gid) && setgid(gid))
-		    throw runtime_error(string(__PRETTY_FUNCTION__)+": failed to setgid()");
-	    }else{
-		if(initgroups(user.c_str(),gid))
-		    throw runtime_error(string(__PRETTY_FUNCTION__)+": failed to initgroups()");
+	    if(!group.empty()) {
+		if(user.empty()) {
+		    if((getgid()!=gid) && setgid(gid))
+			throw runtime_error(string(__PRETTY_FUNCTION__)+": failed to setgid()");
+		}else{
+		    if(initgroups(user.c_str(),gid))
+			throw runtime_error(string(__PRETTY_FUNCTION__)+": failed to initgroups()");
+		}
 	    }
 	    if(!chroot.empty()) {
 		if(::chroot(chroot.c_str()))
