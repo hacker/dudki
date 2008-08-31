@@ -170,6 +170,12 @@ void process::notify_mailto(const string& email,const string& id,const string& e
 	_exit(-1);
     }
     // parent
+    int status;
+    if(waitpid(pid,&status,WNOHANG)) {
+	close(files[0]);
+	close(files[1]);
+	throw runtime_error("vfork()ed sendmail child exited unexpectedly");
+    }
     close(files[0]);
     FILE *mta = fdopen(files[1],"w");
     for(headers_t::const_iterator i=mailto_headers.begin();i!=mailto_headers.end();++i) {
@@ -188,7 +194,6 @@ void process::notify_mailto(const string& email,const string& id,const string& e
 	    id.c_str(), event.c_str(),
 	    description.c_str() );
     fclose(mta);
-    int status;
     waitpid(pid,&status,0);
     // TODO: check the return code
 }
