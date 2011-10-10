@@ -1,0 +1,58 @@
+#! /bin/sh
+#
+# dudki       dudki startup script
+#
+
+### BEGIN INIT INFO
+# Provides:          dudki
+# Required-Start:    $local_fs $remote_fs $syslog
+# Required-Stop:     $local_fs $remote_fs $syslog
+# Should-Start:
+# Should-Stop:
+# Default-Start:     S 2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: a process maintenance daemon
+### END INIT INFO
+
+# Edit /etc/default/dudki to change options
+DUDKI_CONF=/etc/dudki.conf
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DUDKI=/usr/sbin/dudki
+NAME=dudki
+DESC="process maintenance daemon"
+
+[ -x $DUDKI ] || exit 0
+
+. /lib/lsb/init-functions
+
+[ -f /etc/default/$NAME ] && . /etc/default/$NAME
+
+case "$1" in
+ start)
+  log_daemon_msg "Starting $DESC $NAME"
+  $DUDKI -e
+  log_end_msg $?
+  ;;
+ stop)
+  log_daemon_msg "Stopping $DESC $NAME"
+  $DUDKI -k
+  log_end_msg $?
+  ;;
+ reload)
+  log_daemon_msg "Reloading $NAME configuration"
+  $DUDKI -r
+  log_end_msg $?
+  ;;
+ restart|force-reload)
+  $0 stop
+  sleep 1
+  $0 start
+  ;;
+ *)
+  echo "Usage: /etc/init.d/$NAME {start|stop|restart|reload|force-reload}" >&2
+  exit 1
+  ;;
+esac
+
+exit 0

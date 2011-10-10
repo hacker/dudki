@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "configure" ]; then
+    
+    if which ucf >/dev/null; then
+        ucf /usr/share/doc/dudki/dudki.conf /etc/dudki.conf
+    fi
+
+    if which ucfr >/dev/null; then
+        ucfr dudki /etc/dudki.conf
+    fi
+fi
+
+#DEBHELPER#
+
+exit 0

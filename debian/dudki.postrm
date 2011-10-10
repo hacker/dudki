@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "purge" ]; then
+    
+    if which ucf >/dev/null; then
+        ucf --purge /etc/dudki.conf
+    fi
+    
+    if which ucfr >/dev/null; then
+        ucfr --purge dudki /etc/dudki.conf
+    fi
+    
+    rm -f /etc/dudki.conf /etc/dudki.conf.*ucf*
+    
+fi
+
+#DEBHELPER#
+
+exit 0

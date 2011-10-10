@@ -1,0 +1,17 @@
+Source: dudki
+Section: utils
+Priority: optional
+Maintainer: Michael Krelin <hacker@klever.net>
+Build-Depends: debhelper, cdbs, libdotconf-dev, pkg-config, xsltproc
+Standards-Version: 3.9.1
+Homepage: http://kin.klever.net/dudki
+
+Package: dudki
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Process monitoring daemon
+ Dudki! is a simple maintenance daemon that checks whether certain processes
+ are running (based on pidfiles) and, if needed, tries to restart them.  It
+ also supports a self-test command line invocation which can be used in a cron
+ job.
+ .
