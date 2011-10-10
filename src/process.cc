@@ -7,6 +7,7 @@
 #include <dirent.h>
 #include <sys/wait.h>
 #include <syslog.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <iostream>
 #include <fstream>
@@ -112,7 +113,7 @@ void process::launch(const string& id,configuration& config) {
 		if((getuid()!=uid) && setuid(uid))
 		    throw runtime_error(string(__PRETTY_FUNCTION__)+": failed to setuid()");
 	    }
-	    char *argv[] = { "/bin/sh", "-c", (char*)restart_cmd.c_str(), NULL };
+	    char *argv[] = { const_cast<char*>("/bin/sh"), const_cast<char*>("-c"), (char*)restart_cmd.c_str(), NULL };
 	    close(0); close(1); close(2);
 	    execv("/bin/sh",argv);
 	}catch(exception& e) {

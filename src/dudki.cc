@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
+#include <cstring>
+#include <stdlib.h>
 using namespace std;
 #include "configuration.h"
 #include "util.h"
